@@ -32,4 +32,4 @@ jobs:
 
       - name: Trigger Coolify Redeploy
         run: |
-          curl -X POST "https://andreh.dev/api/v1/deploy?uuid=b40ks0wsgo0s84s4okw484g4&force=false"
+          curl -X POST "https://andreh.dev/webhooks/source/github/events/manual"
