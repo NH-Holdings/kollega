@@ -30,12 +30,7 @@ jobs:
           push: true
           tags: andreha/kollega:latest
 
-      - name: Trigger Coolify Redeploy
+      - name: Deploy with Coolify
         run: |
-          curl -X POST "https://andreh.dev/webhooks/source/github/events/manual"
-
-      - name: Trigger Coolify Redeploy webhook
-        uses: distributhor/workflow-webhook@v3
-        with: 
-          webhook_url: ${{ vars.WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          curl -X POST "https://andreh.dev/api/v1/deploy?uuid=b40ks0wsgo0s84s4okw484g4&force=false" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
