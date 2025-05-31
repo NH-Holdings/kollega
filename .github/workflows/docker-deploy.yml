@@ -29,3 +29,7 @@ jobs:
           context: .
           push: true
           tags: andreha/kollega:latest
+
+      - name: Trigger Coolify Redeploy
+        run: |
+          curl -X POST "https://andreh.dev/api/v1/deploy?uuid=b40ks0wsgo0s84s4okw484g4&force=false"
