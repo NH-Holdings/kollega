@@ -38,5 +38,5 @@ jobs:
       - name: Trigger Coolify Redeploy webhook
         uses: distributhor/workflow-webhook@v3
         with: 
-          webhook_url: ${{ var.WEBHOOK_URL }}
+          webhook_url: ${{ vars.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
