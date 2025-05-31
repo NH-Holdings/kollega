@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps: 
@@ -32,4 +32,11 @@ jobs:
 
       - name: Trigger Coolify Redeploy
         run: |
-          curl -X POST "https://andreh.dev/webhooks/source/github/events/manual"
+          curl -X POST https://andreh.dev/webhooks/source/github/events/manual \
+            -H "Content-Type : application/json"
+
+      - name: Trigger Coolify Redeploy webhook
+        uses: distributhor/workflow-webhook@v3
+        with: 
+          webhook_url: ${{ var.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
