@@ -56,6 +56,10 @@ async def legg_til(ctx, aksjekode: str = None):
         if aksjekode.isalpha() and len(aksjekode) <= 5:
             db.add_stock(user_id, aksjekode.upper())
             await ctx.send(f"Aksje {aksjekode} lagt til i overvåkningslisten.")
+            
+            stocks = db.get_stocks(user_id)
+            stock_list = ", ".join(stocks)
+            await bot.change_presence(activity=discord.Game(name=f"Overvåker: {stock_list}"))
         else:
             await ctx.send("Ugyldig aksjekode. Vennligst oppgi en gyldig aksjekode (kun bokstaver, maks 5 tegn).")
     else:    
@@ -67,6 +71,9 @@ async def fjern(ctx, aksjekode: str = None):
     if aksjekode in stocks:
         db.remove_stocks(user_id, aksjekode.upper())
         await ctx.send(f"Aksje {aksjekode} fjernet fra overvåkningslisten.")
+        stocks = db.get_stocks(user_id)
+        stock_list = ", ".join(stocks)
+        await bot.change_presence(activity=discord.Game(name=f"Overvåker: {stock_list}"))
     elif not stocks:
         await ctx.send("Du har ingen aksjer i overvåkningslisten å fjerne.")
     elif not aksjekode:
@@ -81,9 +88,8 @@ async def list(ctx):
         await ctx.send("Du har ingen aksjer i overvåkningslisten.")
         return
     # Display the stocks in the user's watchlist
-    stock_list = "\n - ".join(stocks)
-
-    await ctx.send(f"Din overvåkningsliste:\n{stock_list}")
+    stock_list = "\n - " + "\n - ".join(stocks)
+    await ctx.send(f"Din overvåkningsliste:{stock_list}")
 
 print("Starter...")
 
