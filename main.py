@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
+import stock_db
 
 load_dotenv()
 
@@ -49,6 +50,7 @@ async def rapport(ctx, aksjekode: str = None):
 
 @bot.command()
 async def legg_til(ctx, aksjekode: str = None):
+    #TODO legg til aksjekode i databasen med stock_db.py
     if aksjekode:
         await ctx.send(f"Aksjen du skrev er: {aksjekode} men å legge ting i overvåkning er ikke en ting enda.")
     else:
