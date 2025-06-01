@@ -17,6 +17,9 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     print(f"Bot er online som {bot.user}")
+    stocks = db.get_stocks(user_id)
+    stock_list = ", ".join(stocks)
+    await bot.change_presence(activity=discord.Game(name=f"Overvåker: {stock_list}"))
 
 @bot.event
 async def on_command_error(ctx, error):
