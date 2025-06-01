@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
-import stock_db
+import stock_db as db
 
 load_dotenv()
 
@@ -10,6 +10,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=os.getenv("PREFIX"), intents=intents)
+user_id = "prod"
 
 bot.remove_command("help")
 
@@ -36,7 +37,7 @@ async def help(ctx):
     embed.add_field(name="!help", value="Få hjelp", inline=False)
     embed.add_field(name="!rapport", value="Gjør en ny rapport samme som dagelig", inline=False)
     embed.add_field(name="!rapport <aksje>", value="Gjør en rapport for en aksje", inline=False)
-    embed.add_field(name="!legg til <aksjekode>", value="Legger til en aksje i overvåkningslisten eksempel på aksjekode: FRO for Frontline", inline=False)
+    embed.add_field(name="!legg_til <aksjekode>", value="Legger til en aksje i overvåkningslisten eksempel på aksjekode: FRO for Frontline", inline=False)
     embed.add_field(name="!fjern <aksjekode>", value="Fjerner en aksje fra overvåkningslisten eksempel på aksjekode: FRO for Frontline", inline=False)
     embed.add_field(name="!list", value="Viser overvåkningslisten", inline=False)
     await ctx.send(embed=embed)
@@ -52,21 +53,37 @@ async def rapport(ctx, aksjekode: str = None):
 async def legg_til(ctx, aksjekode: str = None):
     #TODO legg til aksjekode i databasen med stock_db.py
     if aksjekode:
-        await ctx.send(f"Aksjen du skrev er: {aksjekode} men å legge ting i overvåkning er ikke en ting enda.")
-    else:
+        if aksjekode.isalpha() and len(aksjekode) <= 5:
+            db.add_stock(user_id, aksjekode.upper())
+            await ctx.send(f"Aksje {aksjekode} lagt til i overvåkningslisten.")
+        else:
+            await ctx.send("Ugyldig aksjekode. Vennligst oppgi en gyldig aksjekode (kun bokstaver, maks 5 tegn).")
+    else:    
         await ctx.send("Vennligst oppgi en aksjekode for å legge til i overvåkningslisten.")
 
 @bot.command()
 async def fjern(ctx, aksjekode: str = None):
-    if aksjekode:
-        await ctx.send(f"Aksje {aksjekode} kan ikke fjernes siden det ikke er implementert en fjern funksjonn.")
-    else:
+    stocks = db.get_stocks(user_id)
+    if aksjekode in stocks:
+        db.remove_stocks(user_id, aksjekode.upper())
+        await ctx.send(f"Aksje {aksjekode} fjernet fra overvåkningslisten.")
+    elif not stocks:
+        await ctx.send("Du har ingen aksjer i overvåkningslisten å fjerne.")
+    elif not aksjekode:
         await ctx.send("Vennligst oppgi en aksjekode for å fjerne fra overvåkningslisten.")
+    elif aksjekode not in stocks:
+        await ctx.send(f"Aksje {aksjekode} finnes ikke i overvåkningslisten.")
 
 @bot.command()
 async def list(ctx):
-    # Placeholder for the list command
-    await ctx.send("Dette er overvåkningslisten: \n1. FRO - Frontline\n2. DNB - DNB ASA\n3. EQNR - Equinor ASA (bare et eksempel da)")
+    stocks = db.get_stocks(user_id)
+    if not stocks:
+        await ctx.send("Du har ingen aksjer i overvåkningslisten.")
+        return
+    # Display the stocks in the user's watchlist
+    stock_list = "\n - ".join(stocks)
+
+    await ctx.send(f"Din overvåkningsliste:\n{stock_list}")
 
 print("Starter...")
 
