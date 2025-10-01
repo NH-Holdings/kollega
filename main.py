@@ -35,17 +35,18 @@ async def help(ctx):
         color=discord.Color.blue()
     )
     embed.add_field(name="!help", value="Få hjelp", inline=False)
-    embed.add_field(name="!analyser <aksjekode>", value="gjør en analyse av et selskap. eksempel på aksjekode: FRO for Frontline", inline=False)
+    embed.add_field(name="!analyser <aksjekode> <ekstra informasjon>", value="gjør en analyse av et selskap. eksempel på aksjekode: FRO for Frontline", inline=False)
     await ctx.send(embed=embed)
 
 # router til n8n
 
 @bot.command()
-async def analyser(ctx, aksjekode: str = ""):
+async def analyser(ctx, aksjekode: str = "", ekstra: str = ""):
     url = "https://nn.andreh.dev/webhook/543dfa45-54d4-4498-a523-a971e4bc37d6"
 
     payload = {
-        "code" : aksjekode
+        "code" : aksjekode,
+        "extra" : ekstra
     }
 
     headers = {
