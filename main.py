@@ -41,8 +41,11 @@ async def help(ctx):
 # router til n8n
 
 @bot.command()
-async def analyser(ctx, aksjekode: str = "", ekstra: str = ""):
+async def analyser(ctx, aksjekode: str = "", ekstra: str = "", test = "false"):
     url = "https://nn.andreh.dev/webhook/543dfa45-54d4-4498-a523-a971e4bc37d6"
+
+    if test == "true":
+        url = "https://nn.andreh.dev/webhook-test/543dfa45-54d4-4498-a523-a971e4bc37d6"
 
     payload = {
         "code" : aksjekode,
